@@ -17,7 +17,7 @@ spring:
           predicates:
             - Path=/api/product/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment}
+            - RewritePath=/api/(?<segment>.*),/gulimall$\{segment}
 
         - id: third_party_route
           uri: lb://gulimall-third-party
@@ -41,14 +41,17 @@ spring:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
         ## 前端项目，/api
         - id: admin_route
+#lb指的是负载均衡
           uri: lb://renren-fast
+#         断言：指定某个路径，就发给上面那个请求，按照路径进行断言
           predicates:
             - Path=/api/**
+#         下面是重写路径功能
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
 
 
 
-
+#定义的规则如下，有api的就是前端项目，前端项目都会默认路由到renren-fast项目
 ## http://localhost:88/api/captcha.jpg   http://localhost:8080/renren-fast/captcha.jpg
 ## http://localhost:88/api/product/category/list/tree http://localhost:10000/product/category/list/tree

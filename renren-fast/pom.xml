@@ -52,6 +52,7 @@
 	</properties>
 
 	<dependencies>
+<!--		主要是为了引入common中nacos的注册中心和配置中心-->
 		<dependency>
 			<groupId>com.ruc.gulimall</groupId>
 			<artifactId>gulimall-common</artifactId>
