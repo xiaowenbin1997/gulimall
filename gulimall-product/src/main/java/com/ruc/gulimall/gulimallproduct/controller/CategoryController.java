@@ -49,13 +49,14 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
+    //@RequestBody将提交过来的json数据直接转化成CategoryEntity对象
     public R save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
 
