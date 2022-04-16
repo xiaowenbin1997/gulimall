@@ -20,6 +20,7 @@ spring:
             - RewritePath=/api/(?<segment>.*),/gulimall$\{segment}
 
         - id: third_party_route
+#          第三方请求都负载均衡到这个服务
           uri: lb://gulimall-third-party
           predicates:
             - Path=/api/thirdparty/**
