@@ -11,15 +11,16 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@Constraint(validatedBy = { })
+@Constraint(validatedBy = {ListValueConstraintValidator.class})
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
 @Retention(RUNTIME)
 //一个自定义的校验注解
 public @interface ListValue {
-    String message() default "{javax.validation.constraints.NotBlank.message}";
+    String message() default "{com.ruc.common.valid.ListValue.message}";
 
     Class<?>[] groups() default { };
 
     Class<? extends Payload>[] payload() default { };
 
+    int[] vals() default {};
 }
