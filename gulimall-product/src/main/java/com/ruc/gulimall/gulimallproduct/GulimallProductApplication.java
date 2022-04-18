@@ -28,7 +28,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *  2）、配置逻辑删除的组件Bean（省略）
  *  3）、给Bean加上逻辑删除注解@TableLogic   这一步是最重要的
  *
- * 3、JSR303
+ * 3、JSR303  一个校验标准
  *   1）、给Bean添加校验注解:javax.validation.constraints，并定义自己的message提示
  *   2)、开启校验功能@Valid
  *      效果：校验错误以后会有默认的响应；

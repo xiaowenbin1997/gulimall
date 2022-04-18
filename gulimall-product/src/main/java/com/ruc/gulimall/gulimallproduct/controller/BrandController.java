@@ -1,10 +1,15 @@
 package com.ruc.gulimall.gulimallproduct.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 
+import com.ruc.common.valid.AddGroup;
+import com.ruc.common.valid.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +21,7 @@ import com.ruc.gulimall.gulimallproduct.service.BrandService;
 import com.ruc.common.utils.PageUtils;
 import com.ruc.common.utils.R;
 
+import javax.validation.Valid;
 
 
 /**
@@ -53,12 +59,23 @@ public class BrandController {
     }
 
     /**
-     * 保存
+     * 保存  atValid 表示提交的时候需要校验BrandEntity的值
      */
     @RequestMapping("/save")
-    public R save(@RequestBody BrandEntity brand){
-		brandService.save(brand);
-
+    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand){
+//        输入错误不在这个函数中处理，而放在错误处理类中统一处理
+//        if (result.hasErrors()) {
+//            Map<String,String> map = new HashMap<>();
+//            result.getFieldErrors().forEach(item -> {
+//                //获取到错误提示
+//                String message = item.getDefaultMessage();
+//                //获取错误属性的名字
+//                String field = item.getField();
+//                map.put(field,message);
+//            });
+//            return R.error(400,"提交的数据不合法").put("data",map);
+//        }
+ 		brandService.save(brand);
         return R.ok();
     }
 
@@ -66,7 +83,7 @@ public class BrandController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody BrandEntity brand){
+    public R update(@Validated(UpdateGroup.class) @RequestBody BrandEntity brand){
 		brandService.updateById(brand);
 
         return R.ok();
