@@ -1,13 +1,22 @@
 package com.ruc.gulimall.gulimallproduct.service.impl;
 
 import com.ruc.gulimall.gulimallproduct.dao.AttrAttrgroupRelationDao;
+import com.ruc.gulimall.gulimallproduct.dao.AttrGroupDao;
+import com.ruc.gulimall.gulimallproduct.dao.CategoryDao;
 import com.ruc.gulimall.gulimallproduct.entity.AttrAttrgroupRelationEntity;
+import com.ruc.gulimall.gulimallproduct.entity.AttrGroupEntity;
+import com.ruc.gulimall.gulimallproduct.entity.CategoryEntity;
 import com.ruc.gulimall.gulimallproduct.service.AttrAttrgroupRelationService;
+import com.ruc.gulimall.gulimallproduct.vo.AttrRespVo;
 import com.ruc.gulimall.gulimallproduct.vo.AttrVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,6 +27,7 @@ import com.ruc.gulimall.gulimallproduct.dao.AttrDao;
 import com.ruc.gulimall.gulimallproduct.entity.AttrEntity;
 import com.ruc.gulimall.gulimallproduct.service.AttrService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 
 @Service("attrService")
@@ -26,6 +36,10 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Autowired
     AttrAttrgroupRelationDao attrgroupRelationDao;
 
+    @Autowired
+    AttrGroupDao attrGroupDao;
+    @Autowired
+    CategoryDao categoryDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -33,8 +47,9 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 new Query<AttrEntity>().getPage(params),
                 new QueryWrapper<AttrEntity>()
         );
+        PageUtils pageUtils = new PageUtils(page);
 
-        return new PageUtils(page);
+        return pageUtils;
     }
 
     @Transactional
@@ -52,6 +67,41 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         relationEntity.setAttrId(attrEntity.getAttrId());
         attrgroupRelationDao.insert(relationEntity);
         //}
+    }
+
+    @Override
+    public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId) {
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<>();
+        if (catelogId != 0) {
+            queryWrapper.eq("catelog_id",catelogId);
+        }
+        String key = (String) params.get("key");
+        if (!StringUtils.isEmpty(key)) {
+            //这里需要检索两个条件，1是attr_id等于key，2是attr_name模糊匹配key
+            queryWrapper.and(wrapper -> {
+                wrapper.eq("attr_id",key).or().like("attr_name",key);
+            });
+        }
+        IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), queryWrapper);
+        PageUtils pageUtils = new PageUtils(page);
+        List<AttrEntity> records = page.getRecords();
+        List<AttrRespVo> responsVo = records.stream().map(attrEntity -> {
+            AttrRespVo attrRespVo = new AttrRespVo();
+            BeanUtils.copyProperties(attrEntity, attrRespVo);
+            //1、设置分类和分组的名字
+            AttrAttrgroupRelationEntity attrId = attrgroupRelationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity));
+            if (attrId != null) {
+                AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
+                attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
+            }
+            CategoryEntity categoryEntity = categoryDao.selectById(attrRespVo.getCatelogId());
+            if (categoryEntity != null) {
+                attrRespVo.setCatelogName(categoryEntity.getName());
+            }
+            return attrRespVo;
+        }).collect(Collectors.toList());
+        pageUtils.setList(responsVo);
+        return pageUtils;
     }
 
 }
