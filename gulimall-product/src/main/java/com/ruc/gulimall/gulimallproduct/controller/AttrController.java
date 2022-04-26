@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 
+import com.ruc.gulimall.gulimallproduct.vo.AttrGroupRelationVo;
+import com.ruc.gulimall.gulimallproduct.vo.AttrRespVo;
 import com.ruc.gulimall.gulimallproduct.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +31,14 @@ public class AttrController {
     private AttrService attrService;
 
     ///product/attr/base/list/{catelogId}
-    @GetMapping("/base/list/{catelogId}")
+    //product/attr/sale/list/0?
+    //基本属性和销售属性其实是通过同一个方法处理的
+    @GetMapping("/{attrType}/list/{catelogId}")
     public R baseAttrList(@RequestParam Map<String,Object> params,
-                          @PathVariable Long catelogId) {
+                          @PathVariable Long catelogId,
+                          @PathVariable("attrType") String type) {
 
-        PageUtils page = attrService.queryBaseAttrPage(params,catelogId);
+        PageUtils page = attrService.queryBaseAttrPage(params,catelogId,type);
         return R.ok().put("page",page);
     }
 
@@ -53,8 +58,8 @@ public class AttrController {
      */
     @RequestMapping("/info/{attrId}")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
-
+//		AttrEntity attr = attrService.getById(attrId);
+        AttrRespVo attr = attrService.getAttrInfo(attrId);
         return R.ok().put("attr", attr);
     }
 
@@ -72,11 +77,13 @@ public class AttrController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
-
+    public R update(@RequestBody AttrVo attr){
+//		attrService.updateById(attr);
+        attrService.updateAttr(attr);
         return R.ok();
     }
+
+
 
     /**
      * 删除

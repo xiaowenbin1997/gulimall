@@ -6,9 +6,14 @@ import com.ruc.gulimall.gulimallproduct.dao.BrandDao;
 import com.ruc.gulimall.gulimallproduct.dao.CategoryDao;
 import com.ruc.gulimall.gulimallproduct.entity.BrandEntity;
 import com.ruc.gulimall.gulimallproduct.entity.CategoryEntity;
+import com.ruc.gulimall.gulimallproduct.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,6 +35,12 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
+
+    @Autowired
+    CategoryBrandRelationDao relationDao;
+
+    @Autowired
+    BrandService brandService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -70,6 +81,23 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 //        categoryBrandRelationService.update(relationEntity,new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id",catId));
         //另外一种mybatis的方法
         this.baseMapper.updateCategory(catId,name);
+    }
+
+    /**
+     * 查询指定分类中的品牌信息
+     * @param catId
+     * @return
+     */
+    @Override
+    public List<BrandEntity> getBrandsByCatId(Long catId) {
+        List<CategoryBrandRelationEntity> catelogId = relationDao.selectList(new QueryWrapper<CategoryBrandRelationEntity>()
+                .eq("catelog_id", catId));
+        List<BrandEntity> collect = catelogId.stream().map(item -> {
+            Long brandId = item.getBrandId();
+            BrandEntity byId = brandService.getById(brandId);
+            return byId;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
 }
