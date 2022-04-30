@@ -1,9 +1,12 @@
 package com.ruc.gulimall.gulimallproduct.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
+import com.ruc.gulimall.gulimallproduct.entity.ProductAttrValueEntity;
+import com.ruc.gulimall.gulimallproduct.service.ProductAttrValueService;
 import com.ruc.gulimall.gulimallproduct.vo.AttrGroupRelationVo;
 import com.ruc.gulimall.gulimallproduct.vo.AttrRespVo;
 import com.ruc.gulimall.gulimallproduct.vo.AttrVo;
@@ -29,6 +32,16 @@ import com.ruc.common.utils.R;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+    @Autowired
+    private ProductAttrValueService productAttrValueService;
+
+    ///product/attr/base/listforspu/{spuId}
+    @GetMapping("/base/listforspu/{spuId}")
+    public R baseAttrListforSpu(@PathVariable("spuId") Long spuId) {
+        List<ProductAttrValueEntity> entities = productAttrValueService.baseAttrListforSpu(spuId);
+        return R.ok().put("data",entities);
+    }
+
 
     ///product/attr/base/list/{catelogId}
     //product/attr/sale/list/0?
@@ -83,6 +96,15 @@ public class AttrController {
         return R.ok();
     }
 
+
+    ///product/attr/update/{spuId}
+    @PostMapping("/update/{spuId}")
+    public R updateSpu(@PathVariable("spuId") Long spuId,
+                       @RequestBody List<ProductAttrValueEntity> entities){
+//		attrService.updateById(attr);
+        productAttrValueService.updateSpuAttr(spuId,entities);
+        return R.ok();
+    }
 
 
     /**

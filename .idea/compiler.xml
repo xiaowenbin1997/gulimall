@@ -20,8 +20,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="gulimall" target="1.5" />
-      <module name="gulimall-common" target="8" />
+      <module name="gulimall" target="1.8" />
+      <module name="gulimall-common" target="1.8" />
       <module name="gulimall-coupon" target="1.8" />
       <module name="gulimall-gateway" target="1.8" />
       <module name="gulimall-member" target="1.8" />

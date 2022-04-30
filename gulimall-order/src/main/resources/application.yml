@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     username: root
-    password: root
+    password: qwe19970120
     url: jdbc:mysql://39.107.142.71:3306/gulimall_oms
     driver-class-name: com.mysql.jdbc.Driver
 mybatis-plus:

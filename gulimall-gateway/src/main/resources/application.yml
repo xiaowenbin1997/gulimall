@@ -39,7 +39,7 @@ spring:
           predicates:
             - Path=/api/ware/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment}
+            - RewritePath=/api/(?<segment>.*),/gulimall$\{segment}
         ## 前端项目，/api
         - id: admin_route
 #lb指的是负载均衡

@@ -1,9 +1,11 @@
 server:
-  port: 10000
+  port: 18750
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     username: root
-    password: root
+    password: qwe19970120
     url: jdbc:mysql://39.107.142.71:3306/gulimall_pms
     driver-class-name: com.mysql.jdbc.Driver
   cloud:
